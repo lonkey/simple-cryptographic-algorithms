@@ -77,6 +77,10 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Integrated Development Environments
+.idea/
+.vscode/
+
 # IPython
 profile_default/
 ipython_config.py
