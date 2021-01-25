@@ -6,8 +6,8 @@ from tabulate import tabulate
 
 __author__ = "Lukas Zorn"
 __copyright__ = "Copyright 2021 Lukas Zorn"
-__license__ = " GNU GPLv3"
-__version__ = "0.1.1"
+__license__ = "GNU GPLv3"
+__version__ = "0.2.1"
 __maintainer__ = "Lukas Zorn"
 __status__ = "Development"
 

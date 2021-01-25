@@ -7,8 +7,8 @@ import random
 
 __author__ = "Lukas Zorn"
 __copyright__ = "Copyright 2021 Lukas Zorn"
-__license__ = " GNU GPLv3"
-__version__ = "0.1.1"
+__license__ = "GNU GPLv3"
+__version__ = "0.2.1"
 __maintainer__ = "Lukas Zorn"
 __status__ = "Development"
 
@@ -91,7 +91,7 @@ def keypair_generation(p, q, e=None, print_matrix=False, print_linear_factorizat
 def encryption(public_key, p):
     print(tabulate([['RSA Verschlüsselung']], tablefmt='fancy_grid'))
 
-    # Unpack the private key into its components
+    # Unpack the public key into its components
     e, n = public_key
 
     # Choose an integer p such that 0 ≤ p < n
@@ -116,7 +116,7 @@ def encryption(public_key, p):
 def decryption(private_key, c):
     print(tabulate([['RSA Entschlüsselung']], tablefmt='fancy_grid'))
 
-    # Unpack the public key into its components
+    # Unpack the private key into its components
     d, n = private_key
 
     # Choose an integer c such that 0 ≤ c < n
@@ -135,3 +135,40 @@ def decryption(private_key, c):
         f'p = {c}^{d} mod {n}\n'
         f'p = {p}', end='\n\n')
     return p
+
+
+# RSA Brute-force
+def brute_force_by_key(any_key):
+    print(tabulate([['RSA Brute-Force Angriff (schlüsselbasiert)']], tablefmt='fancy_grid'))
+
+    # Unpack the key into its components
+    a, n = any_key
+
+    # Choose multiple integers x such that 0 ≤ x < n
+    x, y, z = random.sample(range(n), 3)
+
+    # Encryption
+    x_c = (x ** a) % n
+    y_c = (y ** a) % n
+    z_c = (z ** a) % n
+
+    # Brute-force
+    b = []
+    for v in range(n):
+        if x != (x_c ** v) % n:
+            continue
+        if y != (y_c ** v) % n:
+            continue
+        if z != (z_c ** v) % n:
+            continue
+        b.append(v)
+
+    # Calculation path output
+    if len(b) < 1:
+        print(
+            f'Das Gegenstück für den Schlüssel K = {{{a}, {n}}} konnte nicht ermittelt werden.', end='\n\n')
+        return -1
+    print(
+        f'Mögliche Gegenstücke für den Schlüssel K = {{{a}, {n}}} mit den Testwerten x = {x}, y = {y} und z = {z} sind:')
+    print(tabulate(zip(*(b, [n] * len(b))), headers=['b', 'n'], tablefmt='pretty'), end='\n\n')
+    return b[0], n
