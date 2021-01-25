@@ -11,8 +11,8 @@ from cryptographic_functions import shamir_calculations
 
 __author__ = "Lukas Zorn"
 __copyright__ = "Copyright 2021 Lukas Zorn"
-__license__ = " GNU GPLv3"
-__version__ = "0.1.1"
+__license__ = "GNU GPLv3"
+__version__ = "0.2.1"
 __maintainer__ = "Lukas Zorn"
 __status__ = "Development"
 
@@ -54,6 +54,7 @@ if __name__ == '__main__':
     # rsa_calculations.keypair_generation(rsa_p, rsa_q, rsa_e, print_matrix, print_linear_factorization)
     # rsa_calculations.encryption(rsa_public_key, rsa_plaintext)
     # rsa_calculations.decryption(rsa_private_key, rsa_ciphertext)
+    # rsa_calculations.brute_force_by_key(rsa_public_key)
 
     ###############################
     # Diffie–Hellman initial values
@@ -65,9 +66,9 @@ if __name__ == '__main__':
 
     # dh_calculations.key_exchange(dh_p, dh_g, dh_a, dh_b)
 
-    ############################
-    # Shamir three-pass protocol
-    ############################
+    ###########################################
+    # Shamir three-pass protocol initial values
+    ###########################################
     shamir_p = 23
     shamir_a = 3  # Optional argument
     shamir_a_i = 15
