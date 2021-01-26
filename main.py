@@ -12,9 +12,6 @@ from cryptographic_functions import shamir_calculations
 __author__ = "Lukas Zorn"
 __copyright__ = "Copyright 2021 Lukas Zorn"
 __license__ = "GNU GPLv3"
-__version__ = "0.2.1"
-__maintainer__ = "Lukas Zorn"
-__status__ = "Development"
 
 if __name__ == '__main__':
     #######################
@@ -50,11 +47,12 @@ if __name__ == '__main__':
     rsa_private_key = (rsa_d, rsa_n)
     rsa_plaintext = 4
     rsa_ciphertext = 31
+    rsa_p_n = rsa_n // 2 if rsa_n < 50 else 5  # Optional argument
 
     # rsa_calculations.keypair_generation(rsa_p, rsa_q, rsa_e, print_matrix, print_linear_factorization)
     # rsa_calculations.encryption(rsa_public_key, rsa_plaintext)
     # rsa_calculations.decryption(rsa_private_key, rsa_ciphertext)
-    # rsa_calculations.brute_force_by_key(rsa_public_key)
+    rsa_calculations.brute_force_by_key(rsa_public_key, rsa_p_n)
 
     ###############################
     # Diffie–Hellman initial values
