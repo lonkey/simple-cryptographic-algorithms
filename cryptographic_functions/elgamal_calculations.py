@@ -29,7 +29,7 @@ def keypair_generation(p, g, d=None):
 
     # Choose an integer d such that 1 ≤ d < (p - 1)
     if d is None:
-        a = random.randrange(1, p - 1)
+        d = random.randrange(1, p - 1)
 
     if d not in range(1, p - 1):
         print(f'Für die Variable d = {d} muss gelten 1 ≤ {d} < {p - 1}.')
