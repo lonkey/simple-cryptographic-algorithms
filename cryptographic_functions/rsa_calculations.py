@@ -8,9 +8,6 @@ import random
 __author__ = "Lukas Zorn"
 __copyright__ = "Copyright 2021 Lukas Zorn"
 __license__ = "GNU GPLv3"
-__version__ = "0.2.1"
-__maintainer__ = "Lukas Zorn"
-__status__ = "Development"
 
 
 # RSA keypair generation
@@ -138,30 +135,36 @@ def decryption(private_key, c):
 
 
 # RSA Brute-force
-def brute_force_by_key(any_key):
+def brute_force_by_key(any_key, p_n=None):
     print(tabulate([['RSA Brute-Force Angriff (schlüsselbasiert)']], tablefmt='fancy_grid'))
 
     # Unpack the key into its components
     a, n = any_key
 
-    # Choose multiple integers x such that 0 ≤ x < n
-    x, y, z = random.sample(range(n), 3)
+    # Test for half of all possible plaintexts or 5
+    if p_n is None:
+        p_n = n // 2 if n < 50 else 5
+
+    # Choose an integer p_n such that 1 ≤ p_n < n
+    if p_n not in range(1, n):
+        print(f'Für die Variable p_n = {p_n} muss gelten 1 ≤ {p_n} < {n}.')
+        return -1
+
+    # Choose p_n plaintexts p such that 0 ≤ p < n
+    p = random.sample(range(n), p_n)
 
     # Encryption
-    x_c = (x ** a) % n
-    y_c = (y ** a) % n
-    z_c = (z ** a) % n
+    c = [(x ** a) % n for x in p]
 
     # Brute-force
     b = []
-    for v in range(n):
-        if x != (x_c ** v) % n:
-            continue
-        if y != (y_c ** v) % n:
-            continue
-        if z != (z_c ** v) % n:
-            continue
-        b.append(v)
+    for (p_x, c_x) in zip(p, c):
+        b_x = []
+        for n_x in range(n):
+            if p_x == (c_x ** n_x) % n:
+                b_x.append(n_x)
+        b.append(b_x)
+    b = sorted(set(b[0]).intersection(*b))
 
     # Calculation path output
     if len(b) < 1:
@@ -169,6 +172,6 @@ def brute_force_by_key(any_key):
             f'Das Gegenstück für den Schlüssel K = {{{a}, {n}}} konnte nicht ermittelt werden.', end='\n\n')
         return -1
     print(
-        f'Mögliche Gegenstücke für den Schlüssel K = {{{a}, {n}}} mit den Testwerten x = {x}, y = {y} und z = {z} sind:')
+        f'Mögliche Gegenstücke für den Schlüssel K = {{{a}, {n}}} sind:')
     print(tabulate(zip(*(b, [n] * len(b))), headers=['b', 'n'], tablefmt='pretty'), end='\n\n')
     return b[0], n
