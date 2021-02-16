@@ -52,7 +52,7 @@ if __name__ == '__main__':
     # rsa_calculations.keypair_generation(rsa_p, rsa_q, rsa_e, print_matrix, print_linear_factorization)
     # rsa_calculations.encryption(rsa_public_key, rsa_plaintext)
     # rsa_calculations.decryption(rsa_private_key, rsa_ciphertext)
-    rsa_calculations.brute_force_by_key(rsa_public_key, rsa_p_n)
+    # rsa_calculations.brute_force_by_key(rsa_public_key, rsa_p_n)
 
     ###############################
     # Diffie–Hellman initial values
