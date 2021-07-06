@@ -8,21 +8,22 @@ from cryptographic_functions import modulo_inverse_additive
 from cryptographic_functions import modulo_inverse_multiplicative
 from cryptographic_functions import rsa_calculations
 from cryptographic_functions import shamir_calculations
+from cryptographic_functions import fiat_shamir_calculations
 
 __author__ = "Lukas Zorn"
 __copyright__ = "Copyright 2021 Lukas Zorn"
 __license__ = "GNU GPLv3"
 
 if __name__ == '__main__':
-    #######################
-    # Global initial values
-    #######################
+    #########################
+    # Global initial values #
+    #########################
     print_matrix = False  # Optional argument
     print_linear_factorization = True  # Optional argument
 
-    #######################
-    # Modulo initial values
-    #######################
+    #########################
+    # Modulo initial values #
+    #########################
     modulo_m = 13
     modulo_a = 7
     modulo_b = 9
@@ -35,9 +36,9 @@ if __name__ == '__main__':
     # modulo_inverse_additive.mia(modulo_m, modulo_a, print_matrix)
     # modulo_inverse_multiplicative.mim(modulo_m, modulo_a, print_matrix, print_linear_factorization)
 
-    ####################
-    # RSA initial values
-    ####################
+    ######################
+    # RSA initial values #
+    ######################
     rsa_p = 3
     rsa_q = 11
     rsa_n = 33
@@ -54,9 +55,9 @@ if __name__ == '__main__':
     # rsa_calculations.decryption(rsa_private_key, rsa_ciphertext)
     # rsa_calculations.brute_force_by_key(rsa_public_key, rsa_p_n)
 
-    ###############################
-    # Diffie–Hellman initial values
-    ###############################
+    #################################
+    # Diffie–Hellman initial values #
+    #################################
     dh_p = 23
     dh_g = 5
     dh_a = 6  # Optional argument
@@ -64,9 +65,9 @@ if __name__ == '__main__':
 
     # dh_calculations.key_exchange(dh_p, dh_g, dh_a, dh_b)
 
-    ###########################################
-    # Shamir three-pass protocol initial values
-    ###########################################
+    #############################################
+    # Shamir three-pass protocol initial values #
+    #############################################
     shamir_p = 23
     shamir_a = 3  # Optional argument
     shamir_a_i = 15
@@ -79,9 +80,9 @@ if __name__ == '__main__':
     # shamir_calculations.keypair_generation(shamir_p, shamir_a, shamir_b, print_matrix, print_linear_factorization)
     # shamir_calculations.key_exchange(shamir_key_a, shamir_key_b, shamir_k)
 
-    ########################
-    # ElGamal initial values
-    ########################
+    ##########################
+    # ElGamal initial values #
+    ##########################
     elgamal_p = 23
     elgamal_g = 5
     elgamal_d = 11  # Optional argument
@@ -95,3 +96,18 @@ if __name__ == '__main__':
     # elgamal_calculations.keypair_generation(elgamal_p, elgamal_g, elgamal_d)
     # elgamal_calculations.encryption(elgamal_public_key, elgamal_plaintext, elgamal_k)
     # elgamal_calculations.decryption(elgamal_private_key, elgamal_ciphertext, print_matrix, print_linear_factorization)
+
+    ####################################################
+    # Fiat-Shamir identification scheme initial values #
+    ####################################################
+    fiat_shamir_p = 5
+    fiat_shamir_q = 3
+    fiat_shamir_s = 7  # Optional argument
+    fiat_shamir_v = 4  # Optional argument
+    fiat_shamir_public_key = (fiat_shamir_v, fiat_shamir_p * fiat_shamir_q)
+    fiat_shamir_private_key = (fiat_shamir_s, fiat_shamir_p * fiat_shamir_q)
+    fiat_shamir_k = 11  # Optional argument
+    fiat_shamir_b = 1  # Optional argument
+
+    # fiat_shamir_calculations.keypair_generation(fiat_shamir_p, fiat_shamir_q, fiat_shamir_s, fiat_shamir_v)
+    fiat_shamir_calculations.verification(fiat_shamir_public_key, fiat_shamir_private_key, fiat_shamir_k, fiat_shamir_b)

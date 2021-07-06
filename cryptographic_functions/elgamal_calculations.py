@@ -70,7 +70,7 @@ def encryption(public_key, m, k=None):
     else:
         if shared_functions.gcd(k, p - 1) != 1:
             print(f'Das selbstgewählte k = {k} ist nicht teilerfremd zu (p - 1) = {p - 1}, da ggT({k},{p - 1}) = '
-                  f'{shared_functions.gcd(k, p - 1)}.', end='\n\n')
+                  f'{shared_functions.gcd(k, p - 1)}.')
             return -1
 
     # Choose an integer k such that 1 ≤ k < p - 1
