@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from cryptographic_functions import modulo_inverse_multiplicative
 from cryptographic_functions import shared_functions

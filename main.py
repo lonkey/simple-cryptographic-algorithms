@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from cryptographic_functions import dh_calculations
 from cryptographic_functions import elgamal_calculations
