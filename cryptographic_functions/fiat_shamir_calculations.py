@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from cryptographic_functions import shared_functions
+from cryptographic_functions import shared_functions, modulo_inverse_multiplicative
 from tabulate import tabulate
 import random
 
@@ -80,7 +80,7 @@ def keypair_generation(p, q, s=None, v=None):
 
 
 # Fiat-Shamir verification
-def verification(key_a, key_b, k=None, b=None):
+def verification(key_a, key_b, k=None, b=None, print_matrix=False, print_linear_factorization=True):
     print(tabulate([['Fiat-Shamir-Protokoll Verifikation']], tablefmt='fancy_grid'))
 
     # Unpack both keys into its components
@@ -124,10 +124,44 @@ def verification(key_a, key_b, k=None, b=None):
             print(f'Für die Variable b = {b} muss gelten b ∈ {{0, 1}}.')
             return -1
 
+    # Calculation of v_i
+    v_i = modulo_inverse_multiplicative.mim(n, v, print_matrix, print_linear_factorization, 1)
+
     # Calculation of y
     y = k if b == 0 else (k * s) % n
 
-    # Calculation y_2
-    y_2 = (y ** 2) % n
+    # Calculation of y_v
+    y_v = x % n if b == 0 else (x * v_i) % n
 
-    print(y_2)
+    # Calculation path output
+    print(
+        f'Die Authentizitätsprüfung am Beispiel von K(A) = {{v, n}} = {{{v}, {n}}} sowie '
+        f'K(B) = {{s, n}} = {{{s}, {n}}}.', end='\n\n')
+    print(
+        f'Commitment:\n'
+        f'(B) Wähle: Zufallszahl k = {k} ist gültig, da gilt:\n'
+        f'1 < {k} < {n} und ggT({k},{n}) = {l}\n'
+        f'(B) Berechne: x = k^2 mod n = {k}^{2} mod {n} = {x}\n'
+        f'B teilt A öffentlich den Wert von x = {x} mit.', end='\n\n')
+    print(
+        f'Challenge:\n'
+        f'(A) Wähle: Zufallsbit b ∈ {{0, 1}} = {b}\n'
+        f'A teilt B öffentlich den Wert von b = {b} mit.', end='\n\n')
+    if b == 0:
+        print(
+            f'Response:\n'
+            f'(B) Berechne: y = k mod n = {k} mod {n} = {y}\n'
+            f'B teilt A öffentlich den Wert von y = {y} mit.', end='\n\n')
+        print(
+            f'Verifikation:\n'
+            f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
+            f'(A) Berechne: y_v = x mod n = {x} mod {n} = {y_v}')
+    else:
+        print(
+            f'Response:\n'
+            f'(B) Berechne: y = k * s mod n = {k} * {s} mod {n} = {y}\n'
+            f'B teilt A öffentlich den Wert von y = {y} mit.', end='\n\n')
+        print(
+            f'Verifikation:\n'
+            f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
+            f'(A) Berechne: y_v = x * v^-1 mod n = {x} * {v_i} mod {n} = {y_v}')

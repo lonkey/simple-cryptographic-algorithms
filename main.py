@@ -106,8 +106,9 @@ if __name__ == '__main__':
     fiat_shamir_v = 4  # Optional argument
     fiat_shamir_public_key = (fiat_shamir_v, fiat_shamir_p * fiat_shamir_q)
     fiat_shamir_private_key = (fiat_shamir_s, fiat_shamir_p * fiat_shamir_q)
-    fiat_shamir_k = 11  # Optional argument
+    fiat_shamir_k = 13  # Optional argument
     fiat_shamir_b = 1  # Optional argument
 
     # fiat_shamir_calculations.keypair_generation(fiat_shamir_p, fiat_shamir_q, fiat_shamir_s, fiat_shamir_v)
-    fiat_shamir_calculations.verification(fiat_shamir_public_key, fiat_shamir_private_key, fiat_shamir_k, fiat_shamir_b)
+    fiat_shamir_calculations.verification(fiat_shamir_public_key, fiat_shamir_private_key, fiat_shamir_k, fiat_shamir_b,
+                                          print_matrix, print_linear_factorization)
