@@ -112,9 +112,6 @@ def verification(key_a, key_b, k=None, b=None, print_matrix=False, print_linear_
         k = random.randrange(2, n)
         l = shared_functions.gcd(k, n)
 
-    # Calculation of x
-    x = (k ** 2) % n
-
     # Choose an integer b such that b ∈ {0, 1}
     if b is None:
         b = random.randrange(0, 2)
@@ -126,6 +123,9 @@ def verification(key_a, key_b, k=None, b=None, print_matrix=False, print_linear_
 
     # Calculation of v_i
     v_i = modulo_inverse_multiplicative.mim(n, v, print_matrix, print_linear_factorization, 1)
+
+    # Calculation of x
+    x = (k ** 2) % n
 
     # Calculation of y
     y = k if b == 0 else (k * s) % n
@@ -155,7 +155,8 @@ def verification(key_a, key_b, k=None, b=None, print_matrix=False, print_linear_
         print(
             f'Verifikation:\n'
             f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
-            f'(A) Berechne: y_v = x mod n = {x} mod {n} = {y_v}')
+            f'(A) Berechne: y_v = x mod n = {x} mod {n} = {y_v}\n'
+            f'(A) Verifikation: y_v ≡ y^2 mod {n} = {y_v} ≡ {(y ** 2) % n}', end='\n\n')
     else:
         print(
             f'Response:\n'
@@ -164,4 +165,94 @@ def verification(key_a, key_b, k=None, b=None, print_matrix=False, print_linear_
         print(
             f'Verifikation:\n'
             f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
-            f'(A) Berechne: y_v = x * v^-1 mod n = {x} * {v_i} mod {n} = {y_v}')
+            f'(A) Berechne: y_v = x * v^-1 mod n = {x} * {v_i} mod {n} = {y_v}\n'
+            f'(A) Verifikation: y_v ≡ y^2 mod {n} = {y_v} ≡ {(y ** 2) % n}', end='\n\n')
+    return y_v
+
+
+# Fiat-Shamir attack
+def attack_scheme(key_a, y=None, b=None, print_matrix=False, print_linear_factorization=True):
+    print(tabulate([['Fiat-Shamir-Protokoll Angriffsmuster']], tablefmt='fancy_grid'))
+
+    # Unpack the public key into its components
+    v, n = key_a
+
+    # Choose an integer y such that 1 < y < n
+    if y is None:
+        y = random.randrange(2, n)
+    else:
+        # Choose an integer k such that 1 < k < n
+        if y not in range(2, n):
+            print(f'Für die Variable y = {y} muss gelten 1 < {y} < {n}.')
+            return -1
+
+    # Choose an integer b such that b ∈ {0, 1}
+    if b is None:
+        b = random.randrange(0, 2)
+    else:
+        # Choose an integer b such that b ∈ {0, 1}
+        if b not in range(0, 2):
+            print(f'Für die Variable b = {b} muss gelten b ∈ {{0, 1}}.')
+            return -1
+
+    # Calculation of v_i
+    v_i = modulo_inverse_multiplicative.mim(n, v, print_matrix, print_linear_factorization, 1)
+
+    # Calculation of x
+    x = (y ** 2) % n if b == 0 else ((y ** 2) * v) % n
+
+    # Calculation of y_v
+    y_v = x % n if b == 0 else (x * v_i) % n
+
+    # Calculation path output
+    print(
+        f'Die Angriffsmuster am Beispiel von K(A) = {{v, n}} = {{{v}, {n}}}.', end='\n\n')
+    print(
+        f'(B) Wähle: Zufallszahl y = {y} ist gültig, da gilt:\n'
+        f'1 < {y} < {n}', end='\n\n')
+    if b == 0:
+        print(
+            f'Commitment:\n'
+            f'(B) Berechne: x = y^2 mod n = {y}^{2} mod {n} = {x} für die Annahme b = {b}\n'
+            f'B teilt A öffentlich den Wert von x = {x} mit.', end='\n\n')
+    else:
+        print(
+            f'Commitment:\n'
+            f'(B) Berechne: x = y^2 * v mod n = {y}^{2} * {v} mod {n} = {x} für die Annahme b = {b}\n'
+            f'B teilt A öffentlich den Wert von x = {x} mit.', end='\n\n')
+    print(
+        f'Challenge:\n'
+        f'(A) Wähle: Zufallsbit b ∈ {{0, 1}} = {b}\n'
+        f'A teilt B öffentlich den Wert von b = {b} mit.', end='\n\n')
+    print(
+        f'Response:\n'
+        f'B teilt A öffentlich den Wert von y = {y} mit.', end='\n\n')
+    if b == 0:
+        print(
+            f'Verifikation:\n'
+            f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
+            f'(A) Berechne: y_v = x mod n = {x} mod {n} = {y_v}\n'
+            f'(A) Verifikation: y_v ≡ y^2 mod {n} = {y_v} ≡ {(y ** 2) % n}', end='\n\n')
+        print(
+            f'Response-Problem:\n'
+            f'Die erfolgreiche Verifizierung hängt vollständig davon ab, dass Alice im Challenge-Teilschritt '
+            f'tatsächlich den Wert von b = {b} anfordert, der zuvor im Commitment angenommen wurde. Ist dies jedoch '
+            f'nicht der Fall, d. h. Alice wählt stattdessen b = {b + 1}, so kann der korrekte Wert für y nicht mehr '
+            f'bestimmt werden.\n'
+            f'(B) Berechne: y = √(x * v^-1) ist bei ausreichend großem Modul n mit vorgegebenen x nicht ermittelbar.',
+            end='\n\n')
+    else:
+        print(
+            f'Verifikation:\n'
+            f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
+            f'(A) Berechne: y_v = x * v^-1 mod n = {x} * {v_i} mod {n} = {y_v}\n'
+            f'(A) Verifikation: y_v ≡ y^2 mod {n} = {y_v} ≡ {(y ** 2) % n}', end='\n\n')
+        print(
+            f'Response-Problem:\n'
+            f'Die erfolgreiche Verifizierung hängt vollständig davon ab, dass Alice im Challenge-Teilschritt '
+            f'tatsächlich den Wert von b = {b} anfordert, der zuvor im Commitment angenommen wurde. Ist dies jedoch '
+            f'nicht der Fall, d. h. Alice wählt stattdessen b = {b - 1}, so kann der korrekte Wert für y nicht mehr '
+            f'bestimmt werden.\n'
+            f'(B) Berechne: y = √(x) mod n ist im endlichen Zahlenkörper bei ausreichend großen Schlüssellängen nicht '
+            f'effizient ermittelbar.', end='\n\n')
+    return y_v
