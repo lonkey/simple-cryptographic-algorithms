@@ -50,12 +50,13 @@ if __name__ == '__main__':
     rsa_private_key = (rsa_d, rsa_n)
     rsa_plaintext = 4
     rsa_ciphertext = 31
-    rsa_p_n = rsa_n // 2 if rsa_n < 50 else 5  # Optional argument
+    rsa_x = 1  # Optional argument
+    rsa_c = 23  # Optional argument
 
     # rsa_calculations.keypair_generation(rsa_p, rsa_q, rsa_e, print_matrix, print_linear_factorization)
     # rsa_calculations.encryption(rsa_public_key, rsa_plaintext)
     # rsa_calculations.decryption(rsa_private_key, rsa_ciphertext)
-    # rsa_calculations.brute_force_by_key(rsa_public_key, rsa_p_n)
+    # rsa_calculations.pollard_rho(rsa_n, rsa_x, rsa_c)
 
     #################################
     # Diffie–Hellman initial values #
