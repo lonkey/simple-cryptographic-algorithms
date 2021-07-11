@@ -118,8 +118,7 @@ if __name__ == '__main__':
     ecc_q = (1, 3)
 
     # ecc_calculations.on_curve(ecc_curve, ecc_p)
-    # ecc_calculations.addition(ecc_curve, ecc_p, ecc_q)
-    # ecc_calculations.double_and_add(ecc_curve, ecc_p)
+    # ecc_calculations.addition(ecc_curve, ecc_p, ecc_q, print_matrix, print_linear_factorization)
 
     ####################################################
     # Fiat-Shamir identification scheme initial values #

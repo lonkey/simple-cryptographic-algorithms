@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from cryptographic_functions import modulo_inverse_multiplicative
 from cryptographic_functions import shared_functions
 from tabulate import tabulate
 
@@ -41,7 +42,7 @@ def on_curve(curve, p, print_header=None):
 
 
 # Elliptic curve point addition
-def addition(curve, p, q):
+def addition(curve, p, q, print_matrix=False, print_linear_factorization=True):
     print(tabulate([['Addition von Punkten auf der elliptischen Kurve']], tablefmt='fancy_grid'))
 
     # Unpack all curve parameters and both points into its components
@@ -60,7 +61,9 @@ def addition(curve, p, q):
         return -1
 
     # Calculation of m
-    m = (y_p - y_q) / (x_p - x_q) % n
+    m_n = (y_p - y_q) % n
+    m_d = modulo_inverse_multiplicative.mim(n, (x_p - x_q) % n, print_matrix, print_linear_factorization, 3)
+    m = (m_n * m_d) % n
 
     # Calculation of x_r, y_r and y_r_i
     x_r = ((m ** 2) - x_p - x_q) % n
@@ -68,7 +71,7 @@ def addition(curve, p, q):
     y_r_i = -y_r % n
 
     # Choose a point r that lies on the elliptic curve
-    if not on_curve(curve, (x_r, y_r_i), 3):
+    if not on_curve(curve, (x_r, y_r_i), 4):
         print(f'Der Punkt R = ({x_r}|{y_r_i}) muss auf der elliptischen Kurve liegen.')
         return -1
 
@@ -85,8 +88,11 @@ def addition(curve, p, q):
     print(
         f'Für die additive Verknüpfung der beiden Punkte wird nun die Steigung m in GF({n}) berechnet:\n'
         f'm = (y_p - y_q) / (x_p - x_q) % n\n'
-        f'm = ({y_p} - {y_q}) / ({x_p} - {x_q}) % {n}\n'
-        f'm = {(y_p - y_q) / (x_p - x_q)} % {n}\n'
+        f'm = (y_p - y_q) * (x_p - x_q)^-1 % n\n'
+        f'm = ({y_p} - {y_q}) * ({x_p} - {x_q})^-1 % {n}\n'
+        f'm = {m_n} * {x_p - x_q}^-1 % {n}\n'
+        f'<AUXILIARY 3>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 3>\n'
+        f'm = {m_n} * {m_d} % {n}\n'
         f'm = {m}', end='\n\n')
     print(
         f'Daraus folgt für die Berechnung von -R = (x_r|y_r):\n'
@@ -106,14 +112,5 @@ def addition(curve, p, q):
         f'y_r_i = {y_r_i}', end='\n\n')
     print(
         f'(3) Verifiziere, dass R = ({x_r}|{y_r_i}) auf der elliptischen Kurve liegt:\n'
-        f'<AUXILIARY 3>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 3>', end='\n\n')
+        f'<AUXILIARY 4>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 4>', end='\n\n')
     return x_r, y_r_i
-
-
-# Elliptic curve double-and-add
-def double_and_add(curve, p):
-    print(tabulate([['Punktverdoppelung auf der elliptischen Kurve']], tablefmt='fancy_grid'))
-
-    # Unpack all curve parameters and the point into its components
-    a, b, n = curve
-    x_p, y_p = p
