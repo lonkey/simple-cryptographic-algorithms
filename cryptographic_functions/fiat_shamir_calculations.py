@@ -240,7 +240,7 @@ def attack_scheme(key_a, y=None, b=None, print_matrix=False, print_linear_factor
             f'tatsächlich den Wert von b = {b} anfordert, der zuvor im Commitment angenommen wurde. Ist dies jedoch '
             f'nicht der Fall, d. h. Alice wählt stattdessen b = {b + 1}, so kann der korrekte Wert für y nicht mehr '
             f'bestimmt werden.\n'
-            f'(B) Berechne: y = √(x * v^-1) ist bei ausreichend großem Modul n mit vorgegebenen x nicht ermittelbar.',
+            f'(B) Berechne: y = √(x * v^-1) ist bei ausreichend großem Modul n mit vorgegebenem x nicht ermittelbar.',
             end='\n\n')
     else:
         print(
