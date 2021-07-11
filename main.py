@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from cryptographic_functions import dh_calculations
+from cryptographic_functions import dh_calculations, fermat_calculations
 from cryptographic_functions import elgamal_calculations
 from cryptographic_functions import modulo_calculations
 from cryptographic_functions import modulo_cyclic_groups
@@ -96,6 +96,13 @@ if __name__ == '__main__':
     # elgamal_calculations.keypair_generation(elgamal_p, elgamal_g, elgamal_d)
     # elgamal_calculations.encryption(elgamal_public_key, elgamal_plaintext, elgamal_k)
     # elgamal_calculations.decryption(elgamal_private_key, elgamal_ciphertext, print_matrix, print_linear_factorization)
+
+    #########################################
+    # Fermat's factorization initial values #
+    #########################################
+    fermat_n = 33
+
+    # fermat_calculations.factorization(fermat_n)
 
     ####################################################
     # Fiat-Shamir identification scheme initial values #
