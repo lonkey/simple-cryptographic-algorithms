@@ -111,14 +111,14 @@ if __name__ == '__main__':
     #################################
     # y^2 = x^3 + ecc_a * x + ecc_b (mod ecc_n)
     ecc_a = 1
-    ecc_b = 0
-    ecc_n = 23
+    ecc_b = 7
+    ecc_n = 17
     ecc_curve = (ecc_a, ecc_b, ecc_n)
-    ecc_p = (9, 5)
+    ecc_p = (2, 0)
     ecc_q = (1, 3)
 
     # ecc_calculations.on_curve(ecc_curve, ecc_p)
-    ecc_calculations.addition(ecc_curve, ecc_p, ecc_q)
+    # ecc_calculations.addition(ecc_curve, ecc_p, ecc_q)
     # ecc_calculations.double_and_add(ecc_curve, ecc_p)
 
     ####################################################
