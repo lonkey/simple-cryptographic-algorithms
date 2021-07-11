@@ -42,8 +42,7 @@ def factorization(n):
 
     # Calculation path output
     print(
-        f'Aus den Ergebnissen der Faktorisierungstabelle lässt sich q(x) für x = {list_x[-1]} als Quadratzahl '
-        f'darstellen:\n'
+        f'Gemäß der Faktorisierungstabelle lässt sich q(x) für x = {list_x[-1]} somit als Quadratzahl darstellen:\n'
         f'q({list_x[-1]}) = {list_q_x[-1]} = {list_y_2[-1]}', end='\n\n')
     print(
         f'Daraus folgt:\n'

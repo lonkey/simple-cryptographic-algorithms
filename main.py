@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-from cryptographic_functions import dh_calculations, fermat_calculations
+from cryptographic_functions import dh_calculations
 from cryptographic_functions import elgamal_calculations
+from cryptographic_functions import fermat_calculations
+from cryptographic_functions import fiat_shamir_calculations
 from cryptographic_functions import modulo_calculations
 from cryptographic_functions import modulo_cyclic_groups
 from cryptographic_functions import modulo_inverse_additive
 from cryptographic_functions import modulo_inverse_multiplicative
 from cryptographic_functions import rsa_calculations
 from cryptographic_functions import shamir_calculations
-from cryptographic_functions import fiat_shamir_calculations
 
 __author__ = "Lukas Zorn"
 __copyright__ = "Copyright 2021 Lukas Zorn"
