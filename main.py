@@ -86,19 +86,21 @@ if __name__ == '__main__':
     ##########################
     # ElGamal initial values #
     ##########################
-    elgamal_p = 11
+    elgamal_p = 7
     elgamal_g = 5
-    elgamal_d = 3  # Optional argument
-    elgamal_e = 4
-    elgamal_k = 7  # Optional argument
+    elgamal_d = 4  # Optional argument
+    elgamal_e = 2
+    elgamal_k = 3  # Optional argument
     elgamal_public_key = (elgamal_p, elgamal_g, elgamal_e)
     elgamal_private_key = (elgamal_p, elgamal_d)
-    elgamal_plaintext = 8
+    elgamal_plaintext = 3
     elgamal_ciphertext = (20, 12)
     elgamal_r = 7  # Optional argument
     elgamal_p_n = 3
     elgamal_s = 7
     elgamal_signed_message = (elgamal_plaintext, elgamal_p_n, elgamal_s)
+    elgamal_homomorphic_c_1 = (3, 3)
+    elgamal_homomorphic_c_2 = (6, 3)
 
     # elgamal_calculations.keypair_generation(elgamal_p, elgamal_g, elgamal_d)
     # elgamal_calculations.encryption(elgamal_public_key, elgamal_plaintext, elgamal_k)
@@ -106,6 +108,9 @@ if __name__ == '__main__':
     # elgamal_calculations.sign(elgamal_public_key, elgamal_private_key, elgamal_plaintext, elgamal_r, print_matrix,
     #                           print_linear_factorization)
     # elgamal_calculations.verify(elgamal_public_key, elgamal_signed_message)
+    # elgamal_calculations.homomorphic_multiplicative_scheme(elgamal_public_key, elgamal_private_key,
+    #                                                        elgamal_homomorphic_c_1, elgamal_homomorphic_c_2,
+    #                                                        print_matrix, print_linear_factorization)
 
     #########################################
     # Fermat's factorization initial values #

@@ -252,3 +252,47 @@ def verify(public_key, signed_message):
             f'Aufgrund der Inkongruenz von a = {a} und b = {b} kann die Integrität der signierten Nachricht nicht '
             f'bestätigt werden.', end='\n\n')
     return a, b
+
+
+# ElGamal homomorphic multiplicative scheme
+def homomorphic_multiplicative_scheme(public_key, private_key, c_1, c_2, print_matrix=False,
+                                      print_linear_factorization=True):
+    print(tabulate([['Homomorphes multiplikatives Schema']], tablefmt='fancy_grid'))
+
+    # Unpack both keys into its components
+    p, g, e = public_key
+    p_v, d = private_key
+
+    # Unpack both ciphertexts into its components
+    a_1, b_1 = c_1
+    a_2, b_2 = c_2
+
+    # The value of p must be identical in both keys
+    if p != p_v:
+        print(f'Die Variablen p = {p} und p_v = {p_v} müssen identisch sein.')
+        return -1
+
+    # Calculation of m
+    a_1_a_2 = ((a_1 * a_2) ** d) % p
+    a_i = modulo_inverse_multiplicative.mim(p, a_1_a_2, print_matrix, print_linear_factorization, 1)
+    m = (a_i * (b_1 * b_2)) % p
+
+    # Calculation path output
+    print(
+        f'Gegeben sind K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} und K(priv) = {{p, d}} = {{{p_v}, {d}}} mit den '
+        f'Geheimtexten c_1 = {{a_1, b_1}} = {{{a_1}, {b_1}}} und c_2 = {{a_2, b_2}} = {{{a_2}, {b_2}}}.', end='\n\n')
+    print(
+        f'Aufgrund der Eigenschaft des multiplikativen Homomorphismus gilt:\n'
+        f'(a, b) = (a_1 * a_2, b_1 * b_2) mod p\n'
+        f'(a, b) = ({a_1} * {a_2}, {b_1} * {b_2}) mod {p}\n'
+        f'(a, b) = ({(a_1 * a_2) % p}, {(b_1 * b_2) % p})', end='\n\n')
+    print(
+        f'Der zum Geheimtext (a, b) gehörende Klartext m = m_1 * m_2 ergibt sich aus:\n'
+        f'(a_1 * a_2)^d * m = (b_1 * b_2) mod p\n'
+        f'({a_1} * {a_2})^{d} * m = ({b_1} * {b_2}) mod {p}\n'
+        f'{(a_1 * a_2) % p}^{d} * m = {(b_1 * b_2) % p}\n'
+        f'{((a_1 * a_2) ** d) % p} * m = {(b_1 * b_2) % p}\n'
+        f'm = {((a_1 * a_2) ** d) % p}^-1 * {(b_1 * b_2) % p}\n'
+        f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
+        f'm = {a_i} * {(b_1 * b_2) % p}\n'
+        f'm = {m}', end='\n\n')
