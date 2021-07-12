@@ -105,6 +105,7 @@ if __name__ == '__main__':
     # elgamal_calculations.decryption(elgamal_private_key, elgamal_ciphertext, print_matrix, print_linear_factorization)
     # elgamal_calculations.sign(elgamal_public_key, elgamal_private_key, elgamal_plaintext, elgamal_r, print_matrix,
     #                           print_linear_factorization)
+    # elgamal_calculations.verify(elgamal_public_key, elgamal_signed_message)
 
     #########################################
     # Fermat's factorization initial values #

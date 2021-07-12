@@ -54,7 +54,7 @@ def keypair_generation(p, g, d=None):
 def encryption(public_key, m, k=None):
     print(tabulate([['ElGamal Verschlüsselung']], tablefmt='fancy_grid'))
 
-    # Unpack the private key into its components
+    # Unpack the public key into its components
     p, g, e = public_key
 
     # Choose an integer m such that 1 ≤ m < p
@@ -188,8 +188,8 @@ def sign(public_key, private_key, m, r=None, print_matrix=False, print_linear_fa
 
     # Calculation path output
     print(
-        f'Die Signierung am Beispiel von K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} und K(priv) = {{p, d}} = '
-        f'{{{p_v}, {d}}} für die Nachricht m = {m}.', end='\n\n')
+        f'Die Signierung für die Nachricht m = {m} mittels K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} und K(priv) = '
+        f'{{p, d}} = {{{p_v}, {d}}}.', end='\n\n')
     print(
         f'Die Zufallszahl r = {r} ist gültig, da gilt:\n'
         f'r ∈ {{1, p − 1}} ∈ {{1, {p - 1}}} und ggT(r, p - 1) = ggT({r}, {p - 1}) = {shared_functions.gcd(r, p - 1)}\n'
@@ -214,3 +214,41 @@ def sign(public_key, private_key, m, r=None, print_matrix=False, print_linear_fa
         f'Die signierte Nachricht m_s = {{m, p_nb, s}} = {{{m}, {p_nb}, {s}}} setzt sich aus dem Klartext, dem '
         f'Nachrichtenbezeichner und dem Signaturelement zusammen.', end='\n\n')
     return m, p_nb, s
+
+
+# ElGamal signature verifying
+def verify(public_key, signed_message):
+    print(tabulate([['ElGamal Verifizierung']], tablefmt='fancy_grid'))
+
+    # Unpack the public key into its components
+    p, g, e = public_key
+
+    # Unpack the signed message into its components
+    m, p_nb, s = signed_message
+
+    # Calculation of a and b
+    a = (g ** m) % p
+    b = (e ** p_nb) * (p_nb ** s) % p
+
+    # Calculation path output
+    print(
+        f'Zur Verifizierung für die signierte Nachricht m = {{m, p_nb, s}} = {{{m}, {p_nb}, {s}}} mittels K(pub) = '
+        f'{{p, g, e}} = {{{p}, {g}, {e}}} muss der Ausdruck g^m = e^p_n * p_n^s mod p bestätigt werden.', end='\n\n')
+    print(
+        f'a = g^m mod p\n'
+        f'a = {g}^{m} mod {p}\n'
+        f'a = {a}', end='\n\n')
+    print(
+        f'b = e^p_n * p_n^s mod p\n'
+        f'b = {e}^{p_nb} * {p_nb}^{s} mod {p}\n'
+        f'b = {(e ** p_nb) % p} * {(p_nb ** s) % p} mod {p}\n'
+        f'b = {b}', end='\n\n')
+    if a == b:
+        print(
+            f'Aufgrund der Kongruenz von a = {a} und b = {b} kann die Integrität der signierten Nachricht bestätigt '
+            f'werden.', end='\n\n')
+    else:
+        print(
+            f'Aufgrund der Inkongruenz von a = {a} und b = {b} kann die Integrität der signierten Nachricht nicht '
+            f'bestätigt werden.', end='\n\n')
+    return a, b
