@@ -162,27 +162,32 @@ def pollard_rho(n, x=None, c=23):
         list_y.append(y)
         list_d.append(shared_functions.gcd(x - y, n))
 
-    p = q = -1
-    for v in list_d:
-        if v == 1 or v == n:
-            continue
-        if not shared_functions.is_prime(n / v):
-            continue
-        if n / v * v == n:
-            p = int(n / v)
-            q = int(v)
-            break
-
-    # Try again with a different c
-    if p == -1 or q == -1:
-        print(f'Für den Zyklus c = {c} war die Faktorisierung nicht erfolgreich. Wiederhole den Versuch mit einem '
-              f'anderen Wert für c.')
-        return -1
-
     print(f'Faktorisierungstabelle nach Pollard-Rho für n = {n}:')
     print(tabulate(zip(*(range(1, len(list_x) + 1), list_x, list_y, list_d)),
                    headers=['i', 'x_i = f(x_i - 1)', 'y_i = x_2i = f(f(y_i − 1))', 'ggT(x_i - x_2i, n)'],
                    tablefmt='pretty'), end='\n\n')
+
+    p = q = -1
+    for d in list_d:
+        if d == 1 or d == n:
+            continue
+        if not shared_functions.is_prime(n / d):
+            continue
+        if n / d * d == n:
+            if shared_functions.is_prime(d):
+                p = int(n / d)
+                q = int(d)
+            else:
+                print(f'In diesem speziellen Fall ist der gefundene Faktor mit dem Wert {d} keine Primzahl. Dieser '
+                      f'kann jedoch durch die Wiederholung der Funktion mit n = {d} weiter faktorisiert werden.')
+                return -1
+            break
+
+    # Try again with a different c
+    if p == -1 or q == -1 or p * q != n:
+        print(f'Für den Zyklus c = {c} war die Faktorisierung nicht erfolgreich. Wiederhole den Versuch mit einem '
+              f'anderen Wert für c.')
+        return -1
 
     # Calculation path output
     print(
@@ -191,5 +196,5 @@ def pollard_rho(n, x=None, c=23):
         f'q = {q}', end='\n\n')
     print(
         f'Verifikation:\n'
-        f'p * q = {p} * {q} = {p * q}', end='\n\n')
+        f'p * q = {p} * {q} = {n}', end='\n\n')
     return p, q
