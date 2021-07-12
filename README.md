@@ -29,13 +29,13 @@ modified accordingly.
 
 Before you can start installing or using packages in your virtual environment you’ll need to activate it.
 
-| Command-line    | Script                              |
-|-----------------|-------------------------------------|
-| fish            | $ source <venv>/bin/activate.fish   |
-| csh/tcsh        | $ source <venv>/bin/activate.csh    |
-| PowerShell Core | $ <venv>/bin/Activate.ps1           |
-| cmd.exe         | C:\> <venv>\Scripts\activate.bat    |
-| PowerShell      | PS C:\> <venv>\Scripts\Activate.ps1 |
+| Command-line    | Script                                       |
+|-----------------|----------------------------------------------|
+| fish            | $ source &lt;venv&gt;/bin/activate.fish      |
+| csh/tcsh        | $ source &lt;venv&gt;/bin/activate.csh       |
+| PowerShell Core | $ &lt;venv&gt;/bin/Activate.ps1              |
+| cmd.exe         | C:\\> &lt;venv&gt;\\Scripts\\activate.bat    |
+| PowerShell      | PS C:\\> &lt;venv&gt;\\Scripts\\Activate.ps1 |
 
 ### Using requirements file
 
