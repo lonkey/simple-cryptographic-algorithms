@@ -86,19 +86,25 @@ if __name__ == '__main__':
     ##########################
     # ElGamal initial values #
     ##########################
-    elgamal_p = 23
+    elgamal_p = 11
     elgamal_g = 5
-    elgamal_d = 11  # Optional argument
-    elgamal_e = 22
-    elgamal_k = 5  # Optional argument
+    elgamal_d = 3  # Optional argument
+    elgamal_e = 4
+    elgamal_k = 7  # Optional argument
     elgamal_public_key = (elgamal_p, elgamal_g, elgamal_e)
     elgamal_private_key = (elgamal_p, elgamal_d)
-    elgamal_plaintext = 11
+    elgamal_plaintext = 8
     elgamal_ciphertext = (20, 12)
+    elgamal_r = 7  # Optional argument
+    elgamal_p_n = 3
+    elgamal_s = 7
+    elgamal_signed_message = (elgamal_plaintext, elgamal_p_n, elgamal_s)
 
     # elgamal_calculations.keypair_generation(elgamal_p, elgamal_g, elgamal_d)
     # elgamal_calculations.encryption(elgamal_public_key, elgamal_plaintext, elgamal_k)
     # elgamal_calculations.decryption(elgamal_private_key, elgamal_ciphertext, print_matrix, print_linear_factorization)
+    # elgamal_calculations.sign(elgamal_public_key, elgamal_private_key, elgamal_plaintext, elgamal_r, print_matrix,
+    #                           print_linear_factorization)
 
     #########################################
     # Fermat's factorization initial values #

@@ -143,3 +143,74 @@ def decryption(private_key, c, print_matrix=False, print_linear_factorization=Tr
         f'm = {a_i * b} mod {p}\n'
         f'm = {m}', end='\n\n')
     return m
+
+
+# ElGamal signature signing
+def sign(public_key, private_key, m, r=None, print_matrix=False, print_linear_factorization=True):
+    print(tabulate([['ElGamal Signierung']], tablefmt='fancy_grid'))
+
+    # Unpack both keys into its components
+    p, g, e = public_key
+    p_v, d = private_key
+
+    # The value of p must be identical in both keys
+    if p != p_v:
+        print(f'Die Variablen p = {p} und p_v = {p_v} müssen identisch sein.')
+        return -1
+
+    # Choose an integer m such that 1 ≤ m < p
+    if m not in range(1, p):
+        print(f'Für die Variable m = {m} muss gelten 1 ≤ {m} < {p}.')
+        return -1
+
+    # Choose an integer r such that 1 ≤ r < p - 1 and such that r and p - 1 are coprime
+    if r is None:
+        r = random.randrange(1, p - 1)
+        while shared_functions.gcd(r, p - 1) != 1:
+            r = random.randrange(1, p - 1)
+    else:
+        if shared_functions.gcd(r, p - 1) != 1:
+            print(f'Das selbstgewählte r = {r} ist nicht teilerfremd zu (p - 1) = {p - 1}, da ggT({r},{p - 1}) = '
+                  f'{shared_functions.gcd(r, p - 1)}.')
+            return -1
+
+    # Choose an integer r such that 1 ≤ r < p - 1
+    if r not in range(1, p - 1):
+        print(f'Für die Variable r = {r} muss gelten 1 ≤ {r} < {p - 1}.')
+        return -1
+
+    # Calculation of r_i
+    r_i = modulo_inverse_multiplicative.mim(p - 1, r, print_matrix, print_linear_factorization, 1)
+
+    # Signing
+    p_nb = (g ** r) % p
+    s = ((m - d * p_nb) * r_i) % (p - 1)
+
+    # Calculation path output
+    print(
+        f'Die Signierung am Beispiel von K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} und K(priv) = {{p, d}} = '
+        f'{{{p_v}, {d}}} für die Nachricht m = {m}.', end='\n\n')
+    print(
+        f'Die Zufallszahl r = {r} ist gültig, da gilt:\n'
+        f'r ∈ {{1, p − 1}} ∈ {{1, {p - 1}}} und ggT(r, p - 1) = ggT({r}, {p - 1}) = {shared_functions.gcd(r, p - 1)}\n'
+        f'Von der Zufallszahl r wird nun das multiplikativ inverse Element r^-1 = {r_i} berechnet.\n'
+        f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>', end='\n\n')
+    print(
+        f'Nun wird der Nachrichtenbezeichner p_nb berechnet:\n'
+        f'p_nb = g^r mod p\n'
+        f'p_nb = {g}^{r} mod {p}\n'
+        f'p_nb = {g ** r} mod {p}\n'
+        f'p_nb = {p_nb}', end='\n\n')
+    print(
+        f'Das Signaturelement s, welches Teil der digitalen Signatur ist, kann nun mittels des Nachrichtenelementes '
+        f'm = {m} wie folgt berechnet werden:\n'
+        f's = (m - d * p_nb) * r^-1 mod (p - 1)\n'
+        f's = ({m} - {d} * {p_nb}) * {r_i} mod {p - 1}\n'
+        f's = ({m} - {d * p_nb}) * {r_i} mod {p - 1}\n'
+        f's = ({m - d * p_nb}) * {r_i} mod {p - 1}\n'
+        f's = ({(m - d * p_nb) % (p - 1)}) * {r_i} mod {p - 1}\n'
+        f's = {s}', end='\n\n')
+    print(
+        f'Die signierte Nachricht m_s = {{m, p_nb, s}} = {{{m}, {p_nb}, {s}}} setzt sich aus dem Klartext, dem '
+        f'Nachrichtenbezeichner und dem Signaturelement zusammen.', end='\n\n')
+    return m, p_nb, s
