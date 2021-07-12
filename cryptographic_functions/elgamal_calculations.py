@@ -297,6 +297,7 @@ def homomorphic_multiplicative_scheme(public_key, private_key, c_1, c_2, print_m
         f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
         f'm = {a_i} * {(b_1 * b_2) % p}\n'
         f'm = {m}', end='\n\n')
+    return m
 
 
 # ElGamal homomorphic multiplicative decryption
