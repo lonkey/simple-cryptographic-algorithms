@@ -25,7 +25,7 @@ The second argument is the location, and thus the name, to create the virtual en
 create this in your project and call it venv. If you name the virtual environment differently, the .gitignore must be
 modified accordingly.
 
-### Activating a virtual environment¶
+### Activating a virtual environment
 
 Before you can start installing or using packages in your virtual environment you’ll need to activate it.
 
