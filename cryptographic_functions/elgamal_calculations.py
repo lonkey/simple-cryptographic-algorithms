@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from cryptographic_functions import modulo_inverse_multiplicative
 from cryptographic_functions import shared_functions
@@ -54,7 +54,7 @@ def keypair_generation(p, g, d=None):
 def encryption(public_key, m, k=None):
     print(tabulate([['ElGamal Verschlüsselung']], tablefmt='fancy_grid'))
 
-    # Unpack the private key into its components
+    # Unpack the public key into its components
     p, g, e = public_key
 
     # Choose an integer m such that 1 ≤ m < p
@@ -70,7 +70,7 @@ def encryption(public_key, m, k=None):
     else:
         if shared_functions.gcd(k, p - 1) != 1:
             print(f'Das selbstgewählte k = {k} ist nicht teilerfremd zu (p - 1) = {p - 1}, da ggT({k},{p - 1}) = '
-                  f'{shared_functions.gcd(k, p - 1)}.', end='\n\n')
+                  f'{shared_functions.gcd(k, p - 1)}.')
             return -1
 
     # Choose an integer k such that 1 ≤ k < p - 1
@@ -143,3 +143,220 @@ def decryption(private_key, c, print_matrix=False, print_linear_factorization=Tr
         f'm = {a_i * b} mod {p}\n'
         f'm = {m}', end='\n\n')
     return m
+
+
+# ElGamal signature signing
+def sign(public_key, private_key, m, r=None, print_matrix=False, print_linear_factorization=True):
+    print(tabulate([['ElGamal Signierung']], tablefmt='fancy_grid'))
+
+    # Unpack both keys into its components
+    p, g, e = public_key
+    p_v, d = private_key
+
+    # The value of p must be identical in both keys
+    if p != p_v:
+        print(f'Die Variablen p = {p} und p_v = {p_v} müssen identisch sein.')
+        return -1
+
+    # Choose an integer m such that 1 ≤ m < p
+    if m not in range(1, p):
+        print(f'Für die Variable m = {m} muss gelten 1 ≤ {m} < {p}.')
+        return -1
+
+    # Choose an integer r such that 1 ≤ r < p - 1 and such that r and p - 1 are coprime
+    if r is None:
+        r = random.randrange(1, p - 1)
+        while shared_functions.gcd(r, p - 1) != 1:
+            r = random.randrange(1, p - 1)
+    else:
+        if shared_functions.gcd(r, p - 1) != 1:
+            print(f'Das selbstgewählte r = {r} ist nicht teilerfremd zu (p - 1) = {p - 1}, da ggT({r},{p - 1}) = '
+                  f'{shared_functions.gcd(r, p - 1)}.')
+            return -1
+
+    # Choose an integer r such that 1 ≤ r < p - 1
+    if r not in range(1, p - 1):
+        print(f'Für die Variable r = {r} muss gelten 1 ≤ {r} < {p - 1}.')
+        return -1
+
+    # Calculation of r_i
+    r_i = modulo_inverse_multiplicative.mim(p - 1, r, print_matrix, print_linear_factorization, 1)
+
+    # Signing
+    p_nb = (g ** r) % p
+    s = ((m - d * p_nb) * r_i) % (p - 1)
+
+    # Calculation path output
+    print(
+        f'Die Signierung für die Nachricht m = {m} mittels K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} und K(priv) = '
+        f'{{p, d}} = {{{p_v}, {d}}}.', end='\n\n')
+    print(
+        f'Die Zufallszahl r = {r} ist gültig, da gilt:\n'
+        f'r ∈ {{1, p − 1}} ∈ {{1, {p - 1}}} und ggT(r, p - 1) = ggT({r}, {p - 1}) = {shared_functions.gcd(r, p - 1)}\n'
+        f'Von der Zufallszahl r wird nun das multiplikativ inverse Element r^-1 = {r_i} berechnet.\n'
+        f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>', end='\n\n')
+    print(
+        f'Nun wird der Nachrichtenbezeichner p_nb berechnet:\n'
+        f'p_nb = g^r mod p\n'
+        f'p_nb = {g}^{r} mod {p}\n'
+        f'p_nb = {g ** r} mod {p}\n'
+        f'p_nb = {p_nb}', end='\n\n')
+    print(
+        f'Das Signaturelement s, welches Teil der digitalen Signatur ist, kann nun mittels des Nachrichtenelementes '
+        f'm = {m} wie folgt berechnet werden:\n'
+        f's = (m - d * p_nb) * r^-1 mod (p - 1)\n'
+        f's = ({m} - {d} * {p_nb}) * {r_i} mod {p - 1}\n'
+        f's = ({m} - {d * p_nb}) * {r_i} mod {p - 1}\n'
+        f's = ({m - d * p_nb}) * {r_i} mod {p - 1}\n'
+        f's = ({(m - d * p_nb) % (p - 1)}) * {r_i} mod {p - 1}\n'
+        f's = {s}', end='\n\n')
+    print(
+        f'Die signierte Nachricht m_s = {{m, p_nb, s}} = {{{m}, {p_nb}, {s}}} setzt sich aus dem Klartext, dem '
+        f'Nachrichtenbezeichner und dem Signaturelement zusammen.', end='\n\n')
+    return m, p_nb, s
+
+
+# ElGamal signature verifying
+def verify(public_key, signed_message):
+    print(tabulate([['ElGamal Verifizierung']], tablefmt='fancy_grid'))
+
+    # Unpack the public key into its components
+    p, g, e = public_key
+
+    # Unpack the signed message into its components
+    m, p_nb, s = signed_message
+
+    # Calculation of a and b
+    a = (g ** m) % p
+    b = (e ** p_nb) * (p_nb ** s) % p
+
+    # Calculation path output
+    print(
+        f'Zur Verifizierung für die signierte Nachricht m = {{m, p_nb, s}} = {{{m}, {p_nb}, {s}}} mittels K(pub) = '
+        f'{{p, g, e}} = {{{p}, {g}, {e}}} muss der Ausdruck g^m = e^p_n * p_n^s mod p bestätigt werden.', end='\n\n')
+    print(
+        f'a = g^m mod p\n'
+        f'a = {g}^{m} mod {p}\n'
+        f'a = {a}', end='\n\n')
+    print(
+        f'b = e^p_n * p_n^s mod p\n'
+        f'b = {e}^{p_nb} * {p_nb}^{s} mod {p}\n'
+        f'b = {(e ** p_nb) % p} * {(p_nb ** s) % p} mod {p}\n'
+        f'b = {b}', end='\n\n')
+    if a == b:
+        print(
+            f'Aufgrund der Kongruenz von a = {a} und b = {b} kann die Integrität der signierten Nachricht bestätigt '
+            f'werden.', end='\n\n')
+    else:
+        print(
+            f'Aufgrund der Inkongruenz von a = {a} und b = {b} kann die Integrität der signierten Nachricht nicht '
+            f'bestätigt werden.', end='\n\n')
+    return a, b
+
+
+# ElGamal homomorphic multiplicative scheme
+def homomorphic_multiplicative_scheme(public_key, private_key, c_1, c_2, print_matrix=False,
+                                      print_linear_factorization=True):
+    print(tabulate([['Homomorphes multiplikatives Schema']], tablefmt='fancy_grid'))
+
+    # Unpack both keys into its components
+    p, g, e = public_key
+    p_v, d = private_key
+
+    # Unpack both ciphertexts into its components
+    a_1, b_1 = c_1
+    a_2, b_2 = c_2
+
+    # The value of p must be identical in both keys
+    if p != p_v:
+        print(f'Die Variablen p = {p} und p_v = {p_v} müssen identisch sein.')
+        return -1
+
+    # Calculation of m
+    a_1_a_2 = ((a_1 * a_2) ** d) % p
+    a_i = modulo_inverse_multiplicative.mim(p, a_1_a_2, print_matrix, print_linear_factorization, 1)
+    m = (a_i * (b_1 * b_2)) % p
+
+    # Calculation path output
+    print(
+        f'Gegeben sind K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} und K(priv) = {{p, d}} = {{{p_v}, {d}}} mit den '
+        f'Geheimtexten c_1 = {{a_1, b_1}} = {{{a_1}, {b_1}}} und c_2 = {{a_2, b_2}} = {{{a_2}, {b_2}}}.', end='\n\n')
+    print(
+        f'Aufgrund der Eigenschaft des multiplikativen Homomorphismus gilt:\n'
+        f'(a, b) = (a_1 * a_2, b_1 * b_2) mod p\n'
+        f'(a, b) = ({a_1} * {a_2}, {b_1} * {b_2}) mod {p}\n'
+        f'(a, b) = ({(a_1 * a_2) % p}, {(b_1 * b_2) % p})', end='\n\n')
+    print(
+        f'Der zum Geheimtext (a, b) gehörende Klartext m = m_1 * m_2 ergibt sich aus der Gleichung a^d * m = b mod p '
+        f'zu:\n'
+        f'(a_1 * a_2)^d * m = (b_1 * b_2) mod p\n'
+        f'({a_1} * {a_2})^{d} * m = ({b_1} * {b_2}) mod {p}\n'
+        f'{(a_1 * a_2) % p}^{d} * m = {(b_1 * b_2) % p}\n'
+        f'{((a_1 * a_2) ** d) % p} * m = {(b_1 * b_2) % p}\n'
+        f'm = {((a_1 * a_2) ** d) % p}^-1 * {(b_1 * b_2) % p}\n'
+        f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
+        f'm = {a_i} * {(b_1 * b_2) % p}\n'
+        f'm = {m}', end='\n\n')
+
+
+# ElGamal homomorphic multiplicative decryption
+def homomorphic_multiplicative_decryption(public_key, private_key, m_1, c_1, c_2, print_matrix=False,
+                                          print_linear_factorization=True):
+    print(tabulate([['Homomorphe multiplikative Entschlüsselung']], tablefmt='fancy_grid'))
+
+    # Unpack both keys into its components
+    p, g, e = public_key
+    p_v, d = private_key
+
+    # Unpack both ciphertexts into its components
+    a_1, b_1 = c_1
+    a_2, b_2 = c_2
+
+    # The value of p must be identical in both keys
+    if p != p_v:
+        print(f'Die Variablen p = {p} und p_v = {p_v} müssen identisch sein.')
+        return -1
+
+    # Calculation of m
+    a_1_a_2 = ((a_1 * a_2) ** d) % p
+    a_i = modulo_inverse_multiplicative.mim(p, a_1_a_2, print_matrix, print_linear_factorization, 1)
+    m = (a_i * (b_1 * b_2)) % p
+
+    # Calculation of m_2
+    m_1_i = modulo_inverse_multiplicative.mim(p, m_1, print_matrix, print_linear_factorization, 2)
+    m_2 = (m * m_1_i) % p
+
+    # Calculation path output
+    print(
+        f'Gegeben sind K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} und K(priv) = {{p, d}} = {{{p_v}, {d}}} mit den '
+        f'Geheimtexten c_1 = {{a_1, b_1}} = {{{a_1}, {b_1}}} und c_2 = {{a_2, b_2}} = {{{a_2}, {b_2}}}. Ebenfalls '
+        f'bekannt ist der zu c_1 zugehörige Klartext m_1 = {m_1}. Unter Ausnutzung der Eigenschaft des multiplikativen '
+        f'Homomorphismus soll nun der Klartext m_2 des Geheimtextes c_2 ermittelt werden.', end='\n\n')
+    print(
+        f'Aufgrund der Eigenschaft des multiplikativen Homomorphismus gilt:\n'
+        f'(a, b) = (a_1 * a_2, b_1 * b_2) mod p\n'
+        f'(a, b) = ({a_1} * {a_2}, {b_1} * {b_2}) mod {p}\n'
+        f'(a, b) = ({(a_1 * a_2) % p}, {(b_1 * b_2) % p})', end='\n\n')
+    print(
+        f'Der zum Geheimtext (a, b) gehörende Klartext m = m_1 * m_2 ergibt sich aus der Gleichung a^d * m = b mod p '
+        f'zu:\n'
+        f'(a_1 * a_2)^d * m = (b_1 * b_2) mod p\n'
+        f'({a_1} * {a_2})^{d} * m = ({b_1} * {b_2}) mod {p}\n'
+        f'{(a_1 * a_2) % p}^{d} * m = {(b_1 * b_2) % p}\n'
+        f'{((a_1 * a_2) ** d) % p} * m = {(b_1 * b_2) % p}\n'
+        f'm = {((a_1 * a_2) ** d) % p}^-1 * {(b_1 * b_2) % p}\n'
+        f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
+        f'm = {a_i} * {(b_1 * b_2) % p}\n'
+        f'm = {m}', end='\n\n')
+    print(
+        f'Der zum Geheimtext c_2 gehörende Klartext m_2 ergibt sich aus:\n'
+        f'm_2 = m * m_1^-1 mod p\n'
+        f'm_2 = {m} * {m_1}^-1 mod {p}\n'
+        f'<AUXILIARY 2>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 2>\n'
+        f'm_2 = {m_2}', end='\n\n')
+    print(
+        f'Verifikation:\n'
+        f'm = m_1 * m_2 mod p\n'
+        f'{m} = {m_1} * {m_2} mod {p}\n'
+        f'{m} = {(m_1 * m_2) % p}', end='\n\n')
+    return m_2

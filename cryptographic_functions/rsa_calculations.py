@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from cryptographic_functions import modulo_inverse_multiplicative
 from cryptographic_functions import shared_functions
@@ -134,44 +134,67 @@ def decryption(private_key, c):
     return p
 
 
-# RSA Brute-force
-def brute_force_by_key(any_key, p_n=None):
-    print(tabulate([['RSA Brute-Force Angriff (schlüsselbasiert)']], tablefmt='fancy_grid'))
+# RSA Pollard's rho algorithm
+def pollard_rho(n, x=None, c=23):
+    print(tabulate([['RSA Pollard-Rho-Methode']], tablefmt='fancy_grid'))
 
-    # Unpack the key into its components
-    a, n = any_key
-
-    # Test for half of all possible plaintexts or 5
-    if p_n is None:
-        p_n = n // 2 if n < 50 else 5
-
-    # Choose an integer p_n such that 1 ≤ p_n < n
-    if p_n not in range(1, n):
-        print(f'Für die Variable p_n = {p_n} muss gelten 1 ≤ {p_n} < {n}.')
+    # Choose an integer n such that n < 2
+    if n < 2:
+        print(f'Das Modul n = {n} muss größer 2 sein.')
         return -1
 
-    # Choose p_n plaintexts p such that 0 ≤ p < n
-    p = random.sample(range(n), p_n)
+    # Choose an integer n that is not a prime number
+    if shared_functions.is_prime(n):
+        print(f'Das Modul n = {n} darf für eine Faktorisierung keine Primzahl sein.')
+        return -1
 
-    # Encryption
-    c = [(x ** a) % n for x in p]
+    # Choose an integer x and y such that 1 ≤ {x, y} < n
+    x = x_0 = y = random.randrange(1, n) if x is None else x
 
-    # Brute-force
-    b = []
-    for (p_x, c_x) in zip(p, c):
-        b_x = []
-        for n_x in range(n):
-            if p_x == (c_x ** n_x) % n:
-                b_x.append(n_x)
-        b.append(b_x)
-    b = sorted(set(b[0]).intersection(*b))
+    list_x = []
+    list_y = []
+    list_d = []
+    while list_x.count(x) != 2:
+        x = (x * x + c) % n
+        list_x.append(x)
+        y = (y * y + c) % n
+        y = (y * y + c) % n
+        list_y.append(y)
+        list_d.append(shared_functions.gcd(x - y, n))
+
+    print(f'Faktorisierungstabelle nach Pollard-Rho für n = {n}:')
+    print(tabulate(zip(*(range(1, len(list_x) + 1), list_x, list_y, list_d)),
+                   headers=['i', 'x_i = f(x_i - 1)', 'y_i = x_2i = f(f(y_i − 1))', 'ggT(x_i - x_2i, n)'],
+                   tablefmt='pretty'), end='\n\n')
+
+    p = q = -1
+    for d in list_d:
+        if d == 1 or d == n:
+            continue
+        if not shared_functions.is_prime(n / d):
+            continue
+        if n / d * d == n:
+            if shared_functions.is_prime(d):
+                p = int(n / d)
+                q = int(d)
+            else:
+                print(f'In diesem speziellen Fall ist der gefundene Faktor mit dem Wert {d} keine Primzahl. Dieser '
+                      f'kann jedoch durch die Wiederholung der Funktion mit n = {d} weiter faktorisiert werden.')
+                return -1
+            break
+
+    # Try again with a different c
+    if p == -1 or q == -1 or p * q != n:
+        print(f'Für den Zyklus c = {c} war die Faktorisierung nicht erfolgreich. Wiederhole den Versuch mit einem '
+              f'anderen Wert für c.')
+        return -1
 
     # Calculation path output
-    if len(b) < 1:
-        print(
-            f'Das Gegenstück für den Schlüssel K = {{{a}, {n}}} konnte nicht ermittelt werden.', end='\n\n')
-        return -1
     print(
-        f'Mögliche Gegenstücke für den Schlüssel K = {{{a}, {n}}} sind:')
-    print(tabulate(zip(*(b, [n] * len(b))), headers=['b', 'n'], tablefmt='pretty'), end='\n\n')
-    return b[0], n
+        f'Aus der Faktorisierungstabelle ergibt sich für die Funktion f(x) = x^2 + c mit c = {c} und x_0 = {x_0}:\n'
+        f'p = {p}\n'
+        f'q = {q}', end='\n\n')
+    print(
+        f'Verifikation:\n'
+        f'p * q = {p} * {q} = {n}', end='\n\n')
+    return p, q
