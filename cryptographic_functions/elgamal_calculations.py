@@ -416,9 +416,6 @@ def bsgs(public_key, print_matrix=False, print_linear_factorization=True):
     # Print calculation message
     print('Berechnung, bitte warten...', end='\r')
 
-    # Calculation of g_i
-    g_i = modulo_inverse_multiplicative.mim(p, g, print_matrix, print_linear_factorization, 1)
-
     # Calculation of m
     m = ceil(sqrt(p - 1))
 
@@ -438,7 +435,10 @@ def bsgs(public_key, print_matrix=False, print_linear_factorization=True):
     # Removal of the calculation message
     print(' ' * len('Berechnung, bitte warten...'), end='\r')
 
-    # The value of p must be identical in both keys
+    # Calculation of g_i
+    g_i = modulo_inverse_multiplicative.mim(p, g, print_matrix, print_linear_factorization, 1)
+
+    # Check the local existence of d
     if not 'd' in locals():
         print(f'Der zum öffentlichen Schlüssel K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} zugehörige private Schlüssel '
               f'K(priv) = {{p, d}} konnte nicht mittels des Babystep-Giantstep-Algorithmus bestimmt werden.')
@@ -446,7 +446,7 @@ def bsgs(public_key, print_matrix=False, print_linear_factorization=True):
 
     # Calculation path output
     print(
-        f'Gegeben ist der öffentliche Schlüssel K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}}. Unter Verwendung des'
+        f'Gegeben ist der öffentliche Schlüssel K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}}. Unter Verwendung des '
         f'Babystep-Giantstep-Algorithmus zur Berechnung des diskreten Logarithmus im endlichen Zahlenkörper wird '
         f'nachfolgend der private Schlüssel K(priv) = {{p, d}} bestimmt.', end='\n\n')
     print(
