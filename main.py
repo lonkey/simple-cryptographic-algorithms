@@ -116,6 +116,9 @@ if __name__ == '__main__':
     #                                                            elgamal_homomorphic_m_1, elgamal_homomorphic_c_1,
     #                                                            elgamal_homomorphic_c_2, print_matrix,
     #                                                            print_linear_factorization)
+    # elgamal_calculations.homomorphic_multiplicative_decryption_k(elgamal_public_key, elgamal_homomorphic_m_1,
+    #                                                              elgamal_homomorphic_c_1, elgamal_homomorphic_c_2,
+    #                                                              print_matrix, print_linear_factorization)
 
     #########################################
     # Fermat's factorization initial values #
