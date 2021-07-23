@@ -2,6 +2,7 @@
 
 from cryptographic_functions import modulo_inverse_multiplicative
 from cryptographic_functions import shared_functions
+from math import ceil, sqrt
 from tabulate import tabulate
 import random
 
@@ -403,3 +404,73 @@ def homomorphic_multiplicative_decryption_k(public_key, m_1, c_1, c_2, print_mat
         f'{b_1_i} * {b_2} = {m_1_i} * {m_2} mod {p}\n'
         f'{(b_1_i * b_2) % p} = {(m_1_i * m_2) % p}', end='\n\n')
     return m_2
+
+
+# ElGamal baby-step giant-step
+def bsgs(public_key, print_matrix=False, print_linear_factorization=True):
+    print(tabulate([['ElGamal Babystep-Giantstep-Algorithmus']], tablefmt='fancy_grid'))
+
+    # Unpack the public key into its components
+    p, g, e = public_key
+
+    # Print calculation message
+    print('Berechnung, bitte warten...', end='\r')
+
+    # Calculation of g_i
+    g_i = modulo_inverse_multiplicative.mim(p, g, print_matrix, print_linear_factorization, 1)
+
+    # Calculation of m
+    m = ceil(sqrt(p - 1))
+
+    # Calculation of g^{0...(m-1)} mod p (baby-step)
+    tab = {(g ** r) % p: r for r in range(m)}
+
+    # Calculation of y
+    y = (g ** (m * (p - 2))) % p
+
+    # Find match in table (giant-step)
+    for q in range(m):
+        z = (e * (y ** q)) % p
+        if z in tab:
+            d = q * m + tab[z]
+            break
+
+    # Removal of the calculation message
+    print(' ' * len('Berechnung, bitte warten...'), end='\r')
+
+    # The value of p must be identical in both keys
+    if not 'd' in locals():
+        print(f'Der zum öffentlichen Schlüssel K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} zugehörige private Schlüssel '
+              f'K(priv) = {{p, d}} konnte nicht mittels des Babystep-Giantstep-Algorithmus bestimmt werden.')
+        return -1
+
+    # Calculation path output
+    print(
+        f'Gegeben ist der öffentliche Schlüssel K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}}. Unter Verwendung des'
+        f'Babystep-Giantstep-Algorithmus zur Berechnung des diskreten Logarithmus im endlichen Zahlenkörper wird '
+        f'nachfolgend der private Schlüssel K(priv) = {{p, d}} bestimmt.', end='\n\n')
+    print(
+        f'Zunächst ist die Menge der Paare M = {{(e * g^-r, r) | 0 ≤ r < m}} mod p zu bestimmen.\n'
+        f'm = ⌈√(p - 1)⌉\n'
+        f'm = ⌈√({p - 1})⌉\n'
+        f'm = ⌈{sqrt(p - 1)}⌉\n'
+        f'm = {m}', end='\n\n')
+    print(
+        f'Dabei ergibt sich die folgende Menge der Paare über (e * g^-r, r) mod p\n'
+        f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
+        f'({e} * {g}^-{0}, {0}) = ({e} * {g_i ** 0}, {0}) = ({(e * (g_i ** 0)) % p}, {0}) mod {p}\n'
+        f'[...]\n'
+        f'({e} * {g}^-{d - 1}, {d - 1}) = ({e} * ({g}^-1)^{d - 1}, {d - 1}) = ({e} * {g_i}^{d - 1}, {d - 1}) = '
+        f'({(e * (g_i ** (d - 1))) % p}, {d - 1}) mod {p}\n'
+        f'({e} * {g}^-{d}, {d}) = ({e} * ({g}^-1)^{d}, {d}) = ({e} * {g_i}^{d}, {d}) = ({(e * (g_i ** d)) % p}, {d}) '
+        f'mod {p}', end='\n\n')
+    print(
+        f'Dabei ist zu erkennen, dass das Paar ({(e * (g_i ** d)) % p}, {d}) die Lösung für den diskreten Logarithmus '
+        f'darstellt. Folglich entspricht der private Schlüssel K(priv) = {{p, d}} = {{{p}, {d}}}.', end='\n\n')
+    print(
+        f'Verifikation mit K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}}:\n'
+        f'e = g^d mod p\n'
+        f'e = {g}^{d} mod {p}\n'
+        f'e = {(g ** d) % p}\n'
+        f'{e} = {(g ** d) % p}', end='\n\n')
+    return d
