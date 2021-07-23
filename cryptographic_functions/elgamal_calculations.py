@@ -386,7 +386,7 @@ def homomorphic_multiplicative_decryption_k(public_key, m_1, c_1, c_2, print_mat
     print(
         f'Gegeben sind K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} mit den Geheimtexten c_1 = {{a_1, b_1}} = '
         f'{{{a_1}, {b_1}}} und c_2 = {{a_2, b_2}} = {{{a_2}, {b_2}}}. Ebenfalls bekannt ist der zu c_1 zugehörige '
-        f'Klartext m_1 = {m_1}. Unter Ausnutzung des Zugriffs auf die Verschlüsselungsfunktion mit einem identischen'
+        f'Klartext m_1 = {m_1}. Unter Ausnutzung des Zugriffs auf die Verschlüsselungsfunktion mit einem identischen '
         f'Zufallswert k für die Berechnung der Geheimtexte kann nun der Klartext m_2 des Geheimtextes c_2 ermittelt '
         f'werden.', end='\n\n')
     print(
