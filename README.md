@@ -31,6 +31,7 @@ Before you can start installing or using packages in your virtual environment yo
 
 | Command-line    | Script                                       |
 |-----------------|----------------------------------------------|
+| bash/zsh        | $ source &lt;venv&gt;/bin/activate           |
 | fish            | $ source &lt;venv&gt;/bin/activate.fish      |
 | csh/tcsh        | $ source &lt;venv&gt;/bin/activate.csh       |
 | PowerShell Core | $ &lt;venv&gt;/bin/Activate.ps1              |
