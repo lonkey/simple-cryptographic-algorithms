@@ -99,6 +99,7 @@ if __name__ == '__main__':
     elgamal_p_n = 3
     elgamal_s = 7
     elgamal_signed_message = (elgamal_plaintext, elgamal_p_n, elgamal_s)
+    elgamal_homomorphic_a_b = (3, 3)
     elgamal_homomorphic_c_1 = (3, 3)
     elgamal_homomorphic_c_2 = (6, 3)
     elgamal_homomorphic_m_1 = 6
@@ -112,6 +113,9 @@ if __name__ == '__main__':
     # elgamal_calculations.homomorphic_multiplicative_scheme(elgamal_public_key, elgamal_private_key,
     #                                                        elgamal_homomorphic_c_1, elgamal_homomorphic_c_2,
     #                                                        print_matrix, print_linear_factorization)
+    # elgamal_calculations.homomorphic_ciphertext_extension(elgamal_public_key, elgamal_private_key,
+    #                                                       elgamal_homomorphic_m_1, elgamal_homomorphic_a_b,
+    #                                                       print_matrix, print_linear_factorization)
     # elgamal_calculations.homomorphic_multiplicative_decryption(elgamal_public_key, elgamal_private_key,
     #                                                            elgamal_homomorphic_m_1, elgamal_homomorphic_c_1,
     #                                                            elgamal_homomorphic_c_2, print_matrix,

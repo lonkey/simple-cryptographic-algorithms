@@ -301,6 +301,62 @@ def homomorphic_multiplicative_scheme(public_key, private_key, c_1, c_2, print_m
     return m
 
 
+# ElGamal homomorphic ciphertext extension
+def homomorphic_ciphertext_extension(public_key, private_key, m_1, a_b, print_matrix=False,
+                                     print_linear_factorization=True):
+    print(tabulate([['Homomorphe Erweiterung des Geheimtextes']], tablefmt='fancy_grid'))
+
+    # Unpack both keys into its components
+    p, g, e = public_key
+    p_v, d = private_key
+
+    # Unpack the combined ciphertext into its components
+    a, b = a_b
+
+    # The value of p must be identical in both keys
+    if p != p_v:
+        print(f'Die Variablen p = {p} und p_v = {p_v} müssen identisch sein.')
+        return -1
+
+    # Calculation of m
+    a_d = (a ** d) % p
+    a_i = modulo_inverse_multiplicative.mim(p, a_d, print_matrix, print_linear_factorization, 1)
+    m = (a_i * b) % p
+
+    # Calculation of m_2
+    m_1_i = modulo_inverse_multiplicative.mim(p, m_1, print_matrix, print_linear_factorization, 2)
+    m_2 = (m * m_1_i) % p
+
+    # Calculation path output
+    print(
+        f'Gegeben sind K(pub) = {{p, g, e}} = {{{p}, {g}, {e}}} und K(priv) = {{p, d}} = {{{p_v}, {d}}} mit dem aus '
+        f'Geheimtext 1 und 2 erweiterten Geheimtext a_b = {{a, b}} = {{{a}, {b}}}. Ebenfalls bekannt ist der zu '
+        f'Geheimtext 1 zugehörige Klartext m_1 = {m_1}. Durch die Umkehrung der Geheimtext-Erweiterung soll nun der '
+        f'Klartext m_2 ermittelt werden.', end='\n\n')
+    print(
+        f'Der zum erweiterten Geheimtext (a, b) gehörende Klartext m ergibt sich aus der Gleichung a^d * m = b mod p '
+        f'zu:\n'
+        f'm = b * (a^d)^-1 mod p\n'
+        f'm = {b} * ({a}^{d})^-1 mod {p}\n'
+        f'm = {b} * {a_d}^-1 mod {p}\n'
+        f'<AUXILIARY 1>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 1>\n'
+        f'm = {b} * {a_i} mod {p}\n'
+        f'm = {m}', end='\n\n')
+    print(
+        f'Der Klartext m_2, welcher zur Erweiterung des Klartexts m_1 verwendet wurde, ergibt sich aus:\n'
+        f'm_2 = m * m_1^-1 mod p\n'
+        f'm_2 = {m} * {m_1}^-1 mod {p}\n'
+        f'<AUXILIARY 2>Achtung: Die Namen der Variablen können abweichen!</AUXILIARY 2>\n'
+        f'm_2 = {m} * {m_1_i} mod {p}\n'
+        f'm_2 = {m_2}', end='\n\n')
+    print(
+        f'Verifikation:\n'
+        f'm = m_1 * m_2 mod p\n'
+        f'{m} = {m_1} * {m_2} mod {p}\n'
+        f'{m} = {(m_1 * m_2) % p}', end='\n\n')
+    return m_2
+
+
 # ElGamal homomorphic multiplicative decryption
 def homomorphic_multiplicative_decryption(public_key, private_key, m_1, c_1, c_2, print_matrix=False,
                                           print_linear_factorization=True):
