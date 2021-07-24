@@ -32,7 +32,6 @@ def gcd_extended(m, a):
         list_r.append(r)
         m = a
         a = r
-
     return list_m, list_a, list_q, list_r
 
 
@@ -72,7 +71,6 @@ def linear_factorization(list_m, list_a, list_q, list_r):
         list_y_calc.append(f'{x} - {q} * ({list_x[-1]}) = {y}')
         list_y.append(y)
         x = list_x[-1]
-
     return list_m, list_a, list_q, list_r, list_x[::-1], list_y_calc[::-1], list_y[::-1]
 
 

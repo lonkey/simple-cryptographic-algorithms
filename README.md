@@ -4,11 +4,7 @@ Python library for demonstrating the functionality of common cryptographic algor
 
 ## Requirements
 
-Python 3.7.9 or later including pip for installing the following requirements:
-
-```shell
-pip install -r requirements.txt
-```
+Python 3.7.9 or later.
 
 ### Creating a virtual environment
 
