@@ -34,7 +34,6 @@ def addition(m, a, b):
           f'({a} + {b}) / {m} = {q} + ({r} / {m})\n'
           f'{a} + {b} = {q} * {m} + {r}\n'
           f'Daraus folgt: {a} ⊕ {b} = {r}', end='\n\n')
-
     return r
 
 
@@ -88,7 +87,6 @@ def multiplication(m, a, b):
           f'({a} * {b}) / {m} = {q} + ({r} / {m})\n'
           f'{a} * {b} = {q} * {m} + {r}\n'
           f'Daraus folgt: {a} ⊙ {b} = {r}', end='\n\n')
-
     return r
 
 

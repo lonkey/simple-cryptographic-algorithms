@@ -54,5 +54,4 @@ def mcg(m, print_matrix=False):
         print(f'Für die zyklische Gruppe der Ordnung m = {m} konnten keine nicht-primitiven Elemente ermittelt werden.',
               end='\n\n')
         n = -1
-
     return p, n
