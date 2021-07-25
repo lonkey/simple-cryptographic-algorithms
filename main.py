@@ -69,7 +69,7 @@ if __name__ == '__main__':
     dh_b_secret = 21261  # Beta
 
     # dh_calculations.key_exchange(dh_p, dh_g, dh_a, dh_b)
-    # elgamal_calculations.bsgs((dh_p, dh_g, dh_a_secret))
+    # elgamal_calculations.bsgs((dh_p, dh_g, dh_a_secret), print_matrix, print_linear_factorization)
 
     #############################################
     # Shamir three-pass protocol initial values #
